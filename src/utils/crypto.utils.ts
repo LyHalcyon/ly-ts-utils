@@ -1,16 +1,16 @@
 import CryptoJS from 'crypto-js';
+import { Buffer } from 'buffer';
 /**
  * 加解密工具类
  */
 class CryptoUtils {
+  private readonly secret='abcdefghijklmnopqrstuvwxyz0123456789'
   private readonly key: CryptoJS.lib.WordArray;
   private readonly iv: CryptoJS.lib.WordArray;
-  // private readonly publicKey: string;
-  // private readonly privateKey: string;
 
   constructor() {
-    this.key = CryptoJS.enc.Utf8.parse('ly-ts-utils-key');
-    this.iv = CryptoJS.enc.Utf8.parse('ly-ts-utils-iv');
+    this.key = CryptoJS.enc.Utf8.parse(this.secret);
+    this.iv = CryptoJS.enc.Utf8.parse(this.secret.substring(0, 16));
   }
   /**
    * 对称加密（AES）

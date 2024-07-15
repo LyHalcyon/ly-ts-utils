@@ -1,7 +1,7 @@
 {
   "name": "ly-ts-utils",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "LyHalcyon",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -64,6 +64,7 @@
   "dependencies": {
     "@types/crypto-js": "^4.2.2",
     "@types/file-saver": "^2.0.7",
+    "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
     "file-saver": "^2.0.5",
     "mitt": "^3.0.1",
