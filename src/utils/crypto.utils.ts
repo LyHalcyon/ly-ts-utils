@@ -1,24 +1,16 @@
-import * as crypto from 'crypto';
+import CryptoJS from 'crypto-js';
 /**
  * 加解密工具类
  */
 class CryptoUtils {
-  private readonly algorithm: string;
-  private readonly key: Buffer;
-  private readonly iv: Buffer;
-  private readonly publicKey: string;
-  private readonly privateKey: string;
+  private readonly key: CryptoJS.lib.WordArray;
+  private readonly iv: CryptoJS.lib.WordArray;
+  // private readonly publicKey: string;
+  // private readonly privateKey: string;
 
   constructor() {
-    this.algorithm = 'aes-256-cbc';
-    this.key = crypto.randomBytes(32); // 256 bits key
-    this.iv = crypto.randomBytes(16); // 128 bits IV
-
-    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-      modulusLength: 2048,
-    });
-    this.publicKey = publicKey.export({ type: 'pkcs1', format: 'pem' }).toString();
-    this.privateKey = privateKey.export({ type: 'pkcs1', format: 'pem' }).toString();
+    this.key = CryptoJS.enc.Utf8.parse('ly-ts-utils-key');
+    this.iv = CryptoJS.enc.Utf8.parse('ly-ts-utils-iv');
   }
   /**
    * 对称加密（AES）
@@ -26,51 +18,26 @@ class CryptoUtils {
    * @constructor
    */
   AES_encode(text: string): string {
-    const cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return `${this.iv.toString('hex')}:${encrypted}`;
+    return CryptoJS.AES.encrypt(text, this.key, {
+      iv: this.iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    }).toString();
   }
 
   /**
    * 对称解密（AES）
-   * @param encryptedText
-   * @constructor
-   */
-  AES_decode(encryptedText: string): string {
-    const [ivHex, encrypted] = encryptedText.split(':');
-    const iv = Buffer.from(ivHex, 'hex');
-    const decipher = crypto.createDecipheriv(this.algorithm, this.key, iv);
-    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
-  }
-
-  /**
-   * 非对称加密（RSA）
    * @param text
    * @constructor
    */
-  RSA_encode(text: string): string {
-    const encrypted = crypto.publicEncrypt(this.publicKey, Buffer.from(text));
-    return encrypted.toString('base64');
+  AES_decode(text: string): string {
+    return CryptoJS.AES.decrypt(text, this.key, {
+      iv: this.iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    }).toString(CryptoJS.enc.Utf8);
   }
 
-  /**
-   * 非对称解密（RSA）
-   * @param encryptedText
-   * @constructor
-   */
-  RSA_decode(encryptedText: string): string {
-    const decrypted = crypto.privateDecrypt(
-      {
-        key: this.privateKey,
-        padding: crypto.constants.RSA_PKCS1_PADDING,
-      },
-      Buffer.from(encryptedText, 'base64')
-    );
-    return decrypted.toString('utf8');
-  }
   /**
    * Base64 编码
    * @param str
@@ -93,7 +60,7 @@ class CryptoUtils {
    * @returns 哈希值的十六进制字符串表示
    */
   hash(text: string): string {
-    return crypto.createHash('sha256').update(text).digest('hex');
+    return CryptoJS.SHA256(text).toString(CryptoJS.enc.Hex);
   }
 
   /**
