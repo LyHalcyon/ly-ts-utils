@@ -56,10 +56,10 @@
     "stringUtils"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/LyHalcyon/ly-public-utils",
+  "homepage": "https://github.com/LyHalcyon/ly-ts-utils",
   "repository": {
     "type": "git",
-    "url": "git@github.com:LyHalcyon/ly-public-utils.git"
+    "url": "git@github.com:LyHalcyon/ly-ts-utils.git"
   },
   "dependencies": {
     "@types/file-saver": "^2.0.7",
